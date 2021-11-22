@@ -11,6 +11,7 @@ namespace Markdown
         private readonly List<IToken> bufferTagTokens;
 
         private string symbolShielding = @"\";
+        private bool isShielding = false;
         public Tokenizer()
         {
             bufferTagTokens = new List<IToken>();
@@ -59,10 +60,11 @@ namespace Markdown
 
             if (IsTagCharacter(tmpTag))
             {
-                if (pointer > 0 && markDownText[pointer - 1].ToString() == symbolShielding)
+                if (pointer > 0 && markDownText[pointer - 1].ToString() == symbolShielding && isShielding == true)
                 {
                     bufferTagTokens.RemoveAt(bufferTagTokens.Count - 1);
                     bufferTagTokens.Add(new TextToken(){Value = tmpTag });
+                    isShielding = false;
                     pointer += 2;
                     return true;
                 }
@@ -82,10 +84,11 @@ namespace Markdown
         {
             if (IsTagCharacter(markDownText[pointer].ToString()))
             {
-                if (pointer > 0 && markDownText[pointer - 1].ToString() == symbolShielding)
+                if (pointer > 0 && markDownText[pointer - 1].ToString() == symbolShielding && isShielding == true)
                 {
                     bufferTagTokens.RemoveAt(bufferTagTokens.Count - 1);
                     bufferTagTokens.Add(new TextToken() { Value = markDownText[pointer].ToString() });
+                    isShielding = false;
                     pointer ++;
                     return true;
                 }
@@ -105,11 +108,22 @@ namespace Markdown
             {
                 if (markDownText[pointer] == ' ' || markDownText[pointer] == '\\')
                 {
+                    if (pointer > 0 && markDownText[pointer - 1] == '\\' && markDownText[pointer] == '\\')
+                    {
+                        bufferTagTokens.Add(new TextToken() { Value = bufferBuilderText.ToString() });
+                        isShielding = false;
+                        pointer++;
+                        return true;
+                    }
+
                     if (bufferBuilderText.Length > 0)
                     {
                         bufferTagTokens.Add(new TextToken() { Value = bufferBuilderText.ToString() });
                         return true;
                     }
+
+                    if (markDownText[pointer] == '\\')
+                        isShielding = true;
 
                     bufferBuilderText.Append(markDownText[pointer].ToString());
                     bufferTagTokens.Add(new TextToken() { Value = bufferBuilderText.ToString() });
