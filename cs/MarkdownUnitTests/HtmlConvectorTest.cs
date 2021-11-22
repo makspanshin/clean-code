@@ -85,7 +85,7 @@ namespace MarkdownUnitTests
 
         [TestCase(@"\_test\_", ExpectedResult = "_test_")]
         [TestCase(@"te\st", ExpectedResult = @"te\st")]
-        [TestCase(@"\\_test_", @"\<em>test</em>")]
+        [TestCase(@"\\_test_", ExpectedResult = @"\<em>test</em>")]
         public string Convert_ShouldBeCorrectlyIdentifyEscapeSymbol(string input)
         {
             var tokenList = tokenizer.Parse(input).ToList();
