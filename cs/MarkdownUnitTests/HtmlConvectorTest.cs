@@ -70,6 +70,16 @@ namespace MarkdownUnitTests
                 .Be(input);
         }
 
+        [TestCase("_test")]
+        [TestCase("test_")]
+        public void Convert_UnclosedItalicToken_ShouldBeReturnsStringToken(string input)
+        {
+            var tokenList = tokenizer.Parse(input).ToList();
+
+            new HtmlConvector().Convert(tokenList).Should()
+                .Be(input);
+        }
+
         [TestCase("_ test_")]
         [TestCase("__ test__")]
         [TestCase("_test _")]
