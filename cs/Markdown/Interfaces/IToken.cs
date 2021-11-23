@@ -2,7 +2,7 @@
 {
     public interface IToken
     {
-        bool IsOpenTag { get; set; }
+        bool? IsOpenTag { get; set; }
 
         string ConvertToHtml();
     }
