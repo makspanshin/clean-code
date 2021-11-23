@@ -6,7 +6,7 @@ namespace Markdown.Model
     {
         public static string MarkTag { get; private set; } = "# ";
 
-        public bool IsOpenTag { get; set; }
+        public bool? IsOpenTag { get; set; }
 
         public string ConvertToHtml()
         {
